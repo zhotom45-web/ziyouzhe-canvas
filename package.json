@@ -3,7 +3,7 @@
   "version": "0.18.57",
   "private": false,
   "license": "SEE LICENSE IN LICENSE",
-  "description": "自由者：本地 AI 无限画布与 ComfyUI 工作流",
+  "description": "自由者画布：本地 AI 图片与视频无限画布及 ComfyUI 工作流",
   "author": "自由者",
   "main": "electron/main.cjs",
   "scripts": {
