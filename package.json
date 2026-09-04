@@ -1,6 +1,6 @@
 {
   "name": "ziyouzhe-canvas",
-  "version": "0.18.57",
+  "version": "0.18.58",
   "private": false,
   "license": "SEE LICENSE IN LICENSE",
   "description": "自由者画布：本地 AI 图片与视频无限画布及 ComfyUI 工作流",
@@ -37,7 +37,7 @@
       "package.json"
     ],
     "directories": {
-      "output": "release-v01857"
+      "output": "release-v01858"
     },
     "win": {
       "target": "portable",

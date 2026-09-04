@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
   Background, BaseEdge, Controls, Handle, MiniMap, NodeResizer, Position, ReactFlow,
-  addEdge, applyEdgeChanges, applyNodeChanges, getBezierPath
+  addEdge, applyEdgeChanges, applyNodeChanges, getBezierPath, useViewport
 } from '@xyflow/react'
 
 const STORAGE_KEY = 'aaa-lite-project-v1'
@@ -665,6 +665,75 @@ const templates = {
   }
 }
 
+function ViewportBoundTaskEditor({ className, children, style, ...props }) {
+  const editorRef = useRef(null)
+  const { zoom = 1 } = useViewport()
+  const safeZoom = Math.max(0.1, Number(zoom) || 1)
+  const [offset, setOffset] = useState({ x: 0, y: 0 })
+  const [viewportSize, setViewportSize] = useState(() => ({
+    width: typeof window === 'undefined' ? 1280 : window.innerWidth,
+    height: typeof window === 'undefined' ? 720 : window.innerHeight
+  }))
+  const availableWidth = Math.max(220, (viewportSize.width - 32) / safeZoom)
+  const availableHeight = Math.max(190, (viewportSize.height - 32) / safeZoom)
+
+  const keepVisible = useCallback(() => {
+    const editor = editorRef.current
+    if (!editor) return
+    const rect = editor.getBoundingClientRect()
+    const margin = 16
+    const targetLeft = Math.min(Math.max(rect.left, margin), Math.max(margin, window.innerWidth - margin - rect.width))
+    const targetTop = Math.min(Math.max(rect.top, margin), Math.max(margin, window.innerHeight - margin - rect.height))
+    const correctionX = (targetLeft - rect.left) / safeZoom
+    const correctionY = (targetTop - rect.top) / safeZoom
+    if (Math.abs(correctionX) < 0.25 && Math.abs(correctionY) < 0.25) return
+    setOffset((current) => ({
+      x: Math.round((current.x + correctionX) * 10) / 10,
+      y: Math.round((current.y + correctionY) * 10) / 10
+    }))
+  }, [safeZoom])
+
+  useLayoutEffect(() => {
+    const editor = editorRef.current
+    if (!editor) return undefined
+    let frame = requestAnimationFrame(keepVisible)
+    const schedule = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(keepVisible)
+    }
+    const observer = new ResizeObserver(schedule)
+    const handleWindowResize = () => {
+      setViewportSize({ width: window.innerWidth, height: window.innerHeight })
+      schedule()
+    }
+    observer.observe(editor)
+    editor.addEventListener('animationend', schedule)
+    window.addEventListener('pointerup', schedule, true)
+    window.addEventListener('resize', handleWindowResize)
+    return () => {
+      cancelAnimationFrame(frame)
+      observer.disconnect()
+      editor.removeEventListener('animationend', schedule)
+      window.removeEventListener('pointerup', schedule, true)
+      window.removeEventListener('resize', handleWindowResize)
+    }
+  }, [keepVisible])
+
+  return <div
+    {...props}
+    ref={editorRef}
+    className={className}
+    style={{
+      ...style,
+      minWidth: Math.min(360, availableWidth),
+      maxWidth: Math.min(900, availableWidth),
+      minHeight: Math.min(245, availableHeight),
+      maxHeight: availableHeight,
+      transform: `translate(calc(-50% + ${offset.x}px), ${offset.y}px)`
+    }}
+  >{children}</div>
+}
+
 function WorkflowNode({ id, data, selected }) {
   const item = nodeCatalog[data.kind] || nodeCatalog.prompt
   const nodeTitle = semanticNodeTitle(data, item.title)
@@ -760,7 +829,7 @@ function WorkflowNode({ id, data, selected }) {
       {isMedia
         ? <button type="button" className={`node-status node-task-toggle nodrag ${data.taskEditorOpen ? 'open' : ''}`} title={data.taskEditorOpen ? '点击收起任务参数' : '点击展开任务参数'} onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); data.onTaskConfig?.(id, 'taskEditorOpen', !data.taskEditorOpen) }}><i className={data.status === '生成中' ? 'working' : ''} /><span>{data.status || '就绪'}</span>{data.linkGroup && <em>联动</em>}{data.taskStyle && data.taskStyle !== '无风格' && <em>{data.taskStyle}</em>}<b>{data.taskEditorOpen ? '⌃' : '⌄'}</b></button>
         : data.kind === 'prompt' ? null : <div className={`node-status ${isFillTask ? 'node-drag-footer' : ''}`} title={isFillTask ? '按住鼠标左键拖动任务框' : undefined}><i className={data.status === '生成中' ? 'working' : ''} /><span>{data.status || '就绪'}</span>{data.linkGroup && <em>联动</em>}{data.taskStyle && data.taskStyle !== '无风格' && <em>{data.taskStyle}</em>}</div>}
-      {data.taskEditorOpen && isMedia && <div className={`task-editor nodrag nowheel ${data.taskEditorExpanded ? 'expanded' : ''}`} onMouseDown={(event) => event.stopPropagation()} onDoubleClick={(event) => event.stopPropagation()} onKeyDown={(event) => event.stopPropagation()}>
+      {data.taskEditorOpen && isMedia && <ViewportBoundTaskEditor className={`task-editor nodrag nowheel ${data.taskEditorExpanded ? 'expanded' : ''}`} onMouseDown={(event) => event.stopPropagation()} onDoubleClick={(event) => event.stopPropagation()} onKeyDown={(event) => event.stopPropagation()}>
         <div className="task-editor-head"><span>{isFrame ? '首尾帧任务 · 自动识别视频画面' : data.kind === 'video' ? '视频任务 · 自动匹配视频工作流' : '图片任务 · 自动匹配生图工作流'} · 拖动右下角调整大小</span><div><button title={data.taskEditorExpanded ? '恢复大小' : '放大面板'} onClick={() => data.onTaskConfig?.(id, 'taskEditorExpanded', !data.taskEditorExpanded)}>{data.taskEditorExpanded ? '↙' : '⛶'}</button><button title="收起参数面板" onClick={() => data.onTaskConfig?.(id, 'taskEditorOpen', false)}>×</button></div></div>
         {isFrame ? <div className="frame-task-editor">
           <div className="frame-task-controls"><label><span>识别位置</span><select value={data.frameRole || '尾帧'} onChange={(event) => data.onFrameExtract?.(id, event.target.value)}><option>首帧</option><option>尾帧</option></select></label><button onClick={() => data.onFrameExtract?.(id, data.frameRole || '尾帧')}>↻ 重新识别视频{data.frameRole || '尾帧'}</button></div>
@@ -793,7 +862,7 @@ function WorkflowNode({ id, data, selected }) {
           </section>
         </div>}
         </>}
-      </div>}
+      </ViewportBoundTaskEditor>}
       <Handle type="source" position={Position.Right} />
     </div>
   )
@@ -2688,7 +2757,7 @@ function App() {
   return (
     <main className={`app-shell ${chatOpen ? '' : 'chat-collapsed'} ${chatOpen && chatMode !== 'api' ? 'chat-web-mode' : ''} ${theme === 'light' ? 'theme-light' : ''}`}>
       <header className="topbar">
-        <div className="brand compact"><span className="brand-mark"><img src="./icon.png" alt="" /></span><div><b>自由者</b><small>无限画布 · v0.18.57</small></div></div>
+        <div className="brand compact"><span className="brand-mark"><img src="./icon.png" alt="" /></span><div><b>自由者</b><small>无限画布 · v0.18.58</small></div></div>
         <div className="project-save"><span>项目</span><button className="new-canvas-button" onClick={createCanvas}>＋ 新建画布</button><button className="canvas-list-button" onClick={() => setModal('canvases')}>{projectName}<b>{projects.length}</b></button><em>{saved ? '已保存' : '未保存'}</em><button className="save-compact" onClick={save} disabled={saved}>保存</button><button className="history-button" title="保存历史" onClick={() => setModal('history')}>◴</button></div>
         <div className="system-strip">
           <div className="live-metric cpu" title="Windows 全部处理器核心的实时平均使用率"><i><em style={{ width: `${stats.cpu || 0}%` }} /></i><b>{formatStat(stats.cpu)}</b><span>CPU</span></div>
