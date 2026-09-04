@@ -1,22 +1,58 @@
-MIT License
+自由者非商业许可证 1.0
+Ziyouzhe Non-Commercial License 1.0
 
-Copyright (c) 2026 自由者 contributors
+Copyright (c) 2026 自由者。保留所有权利。
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+本许可证适用于自由者软件的源代码、构建产物、界面设计和随附文档（统称“本软件”）。
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+一、允许的用途
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+在遵守本许可证全部条款的前提下，任何个人或组织均可免费查看、下载、运行、研究、复制和修改本软件，但仅限个人、学习、研究、测试及其他非商业用途。
 
+二、商业使用
+
+未经版权所有者事先明确书面授权，不得将本软件或其修改版本直接或间接用于任何商业、营利或收费活动，包括但不限于：
+
+1. 销售、出租、收费部署、收费托管或提供付费技术服务；
+2. 将本软件集成到收费产品、商业服务、企业内部生产服务或广告获利业务中；
+3. 以本软件或其修改版本获取收入、商业利益或竞争优势；
+4. 代表客户、雇主或其他商业主体使用本软件提供有偿成果。
+
+商业授权必须由版权所有者以书面形式单独授予。未收到明确书面授权，不视为获得商业使用许可。
+
+三、禁止行为
+
+无论是否收费，均不得：
+
+1. 转售、倒卖或以其他方式单独分发本软件的原版或仅作轻微修改的版本；
+2. 删除或隐藏版权声明、许可证、来源说明或作者信息；
+3. 换皮、改名或使用容易造成混淆的名称、标识、界面，将本软件冒充为自行独立开发的产品；
+4. 冒充自由者官方、官方团队、授权合作方或以其他方式误导用户；
+5. 使用“自由者”名称、标识或其他品牌元素暗示未经授权的官方关系。
+
+四、非商业再分发与修改
+
+非商业再分发或公开修改版本时，必须同时满足：
+
+1. 保留本许可证和全部版权声明；
+2. 明确标注修改内容，并说明该版本并非自由者官方版本；
+3. 以本许可证或限制程度不低于本许可证的条款提供；
+4. 不得收取费用，也不得附带任何商业推广或获利安排。
+
+五、第三方组件
+
+本软件包含或依赖的第三方组件继续适用其各自许可证。本许可证不限制第三方权利人依据其许可证授予的权利。
+
+六、终止
+
+违反本许可证任何条款时，依据本许可证获得的权利自动终止。终止后必须停止使用和分发本软件，并删除所持有的本软件副本，但法律另有要求的除外。
+
+七、免责声明
+
+本软件按“现状”提供，不附带任何明示或默示保证。版权所有者不对因使用、无法使用或分发本软件而产生的任何索赔、损失或其他责任承担责任，但适用法律另有强制规定的除外。
+
+八、适用范围
+
+本许可证自包含本文件的提交及其后续版本开始适用。此前已经明确依据其他许可证发布的版本，继续适用其发布时的许可证。
+
+English summary (for convenience only): Personal and non-commercial use is permitted. Commercial use requires prior express written permission from the copyright holder. Resale, rebranding, removal of attribution, impersonation of the official project, and misleading claims of official affiliation are prohibited. The Chinese text above is the controlling license text.

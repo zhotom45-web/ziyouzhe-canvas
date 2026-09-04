@@ -2,7 +2,7 @@
   "name": "ziyouzhe-canvas",
   "version": "0.18.57",
   "private": false,
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "description": "自由者：本地 AI 无限画布与 ComfyUI 工作流",
   "author": "自由者",
   "main": "electron/main.cjs",
