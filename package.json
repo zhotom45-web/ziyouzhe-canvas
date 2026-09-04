@@ -1,0 +1,48 @@
+{
+  "name": "ziyouzhe-canvas",
+  "version": "0.18.57",
+  "private": false,
+  "license": "MIT",
+  "description": "自由者：本地 AI 无限画布与 ComfyUI 工作流",
+  "author": "自由者",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && electron .\"",
+    "build": "vite build --configLoader runner",
+    "preview": "vite preview --host 127.0.0.1",
+    "start": "electron .",
+    "dist": "npm run build && electron-builder --win portable",
+    "postdist": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/update-desktop-shortcut.ps1"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "@xyflow/react": "latest",
+    "vite": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "concurrently": "latest",
+    "electron": "latest",
+    "electron-builder": "latest",
+    "wait-on": "latest"
+  },
+  "build": {
+    "appId": "local.ziyouzhe.desktop",
+    "productName": "自由者",
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "build/icon.ico",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release-v01857"
+    },
+    "win": {
+      "target": "portable",
+      "icon": "build/icon.ico"
+    },
+    "artifactName": "自由者-${version}.${ext}"
+  }
+}
