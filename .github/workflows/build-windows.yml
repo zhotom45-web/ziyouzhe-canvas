@@ -6,6 +6,14 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing release tag to receive the Windows portable build
+        required: false
+        type: string
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -26,4 +34,18 @@ jobs:
           name: ziyouzhe-windows-portable
           path: release-v*/自由者-*.exe
           if-no-files-found: error
-
+      - name: Prepare release asset
+        if: github.event_name == 'workflow_dispatch' && inputs.release_tag != ''
+        shell: pwsh
+        run: |
+          $version = '${{ inputs.release_tag }}'.TrimStart('v')
+          $source = Get-ChildItem -Path 'release-v*/自由者-*.exe' | Select-Object -First 1
+          if (-not $source) { throw 'Windows portable build was not found' }
+          Copy-Item -LiteralPath $source.FullName -Destination "ziyouzhe-$version.exe"
+      - name: Attach Windows build to release
+        if: github.event_name == 'workflow_dispatch' && inputs.release_tag != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.release_tag }}
+          files: ziyouzhe-*.exe
+          fail_on_unmatched_files: true
